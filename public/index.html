@@ -7,8 +7,7 @@
     body { font-family: Arial, sans-serif; padding: 2em; background: #f5f5f5; }
     #result { margin-top: 1em; font-weight: bold; }
     input, button { font-size: 1em; padding: .5em; }
-    .avatar { margin-top: 10px; border-radius: 8px; border: 1px solid #ccc; width: 150px; height: 150px; object-fit: cover; }
-    .error { color: red; }
+    .avatar { margin-top: 10px; }
   </style>
 </head>
 <body>
@@ -18,6 +17,7 @@
     <button type="submit">Check</button>
   </form>
   <div id="result"></div>
+
   <script>
     document.getElementById('usernameForm').addEventListener('submit', async function(e) {
       e.preventDefault();
@@ -35,21 +35,10 @@
         const data = await response.json();
 
         if (response.ok && data.exists) {
-          // Gunakan endpoint thumbnail baru Roblox
-          const avatarUrl = `https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${data.user.id}&size=150x150&format=Png&isCircular=false`;
-          // Fetch avatar URL
-          const res = await fetch(avatarUrl);
-          const thumbData = await res.json();
-          let imgTag = "";
-          if (thumbData && thumbData.data && thumbData.data.length > 0) {
-            imgTag = `<img class="avatar" src="${thumbData.data[0].imageUrl}" alt="Avatar">`;
-          } else {
-            imgTag = `<div class="error">Avatar not found</div>`;
-          }
           resultDiv.innerHTML = `
             Username "<b>${username}</b>" exists!<br>
             User ID: <b>${data.user.id}</b><br>
-            ${imgTag}
+            <img class="avatar" src="https://www.roblox.com/headshot-thumbnail/image?userId=${data.user.id}&width=150&height=150&format=png" alt="Avatar">
           `;
         } else {
           resultDiv.textContent = `Username "${username}" does not exist.`;
