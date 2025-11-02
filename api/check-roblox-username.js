@@ -25,4 +25,25 @@ export default async function handler(req, res) {
     const robloxRes = await fetch("https://users.roblox.com/v1/usernames/users", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify
+      body: JSON.stringify({
+        usernames: [username],
+        excludeBannedUsers: false
+      })
+    });
+
+    if (!robloxRes.ok) {
+      res.status(robloxRes.status).json({ error: "Failed to fetch from Roblox" });
+      return;
+    }
+
+    const data = await robloxRes.json();
+    // Jika data.data kosong, berarti username tidak ditemukan
+    if (data.data && data.data.length > 0) {
+      res.status(200).json({ exists: true, user: data.data[0] });
+    } else {
+      res.status(200).json({ exists: false });
+    }
+  } catch (err) {
+    res.status(500).json({ error: "Internal server error", message: err.message });
+  }
+}
