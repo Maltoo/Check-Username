@@ -4,7 +4,13 @@ export default async function handler(req, res) {
     return;
   }
 
-  const { username } = req.body;
+  let username = "";
+  try {
+    username = req.body.username || "";
+  } catch {
+    // fallback for possible parsing error
+    username = "";
+  }
 
   if (!username) {
     res.status(400).json({ error: "Username is required" });
