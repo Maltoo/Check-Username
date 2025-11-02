@@ -4,17 +4,7 @@ export default async function handler(req, res) {
     return;
   }
 
-  let username = "";
-  try {
-    // Vercel sometimes sends req.body as a string
-    if (typeof req.body === "string") {
-      username = JSON.parse(req.body).username || "";
-    } else {
-      username = req.body.username || "";
-    }
-  } catch {
-    username = "";
-  }
+  const { username } = req.body;
 
   if (!username) {
     res.status(400).json({ error: "Username is required" });
@@ -27,6 +17,7 @@ export default async function handler(req, res) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ usernames: [username], excludeBannedUsers: false }),
     });
+
     const data = await robloxRes.json();
 
     if (data?.data?.length > 0 && data.data[0].requestedUsername) {
