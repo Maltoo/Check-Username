@@ -4,11 +4,17 @@ export default async function handler(req, res) {
     return;
   }
 
+  // Parse body secara manual jika bukan objek
   let username = "";
   try {
-    username = req.body.username || "";
+    if (typeof req.body === "string") {
+      // Vercel kadang mengirim body sebagai string
+      const json = JSON.parse(req.body);
+      username = json.username || "";
+    } else {
+      username = req.body.username || "";
+    }
   } catch {
-    // fallback for possible parsing error
     username = "";
   }
 
@@ -23,7 +29,6 @@ export default async function handler(req, res) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ usernames: [username], excludeBannedUsers: false }),
     });
-
     const data = await robloxRes.json();
 
     if (data?.data?.length > 0 && data.data[0].requestedUsername) {
